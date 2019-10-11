@@ -1,0 +1,6 @@
+{
+  "clientid": "plex-client-id",
+  "bridgeip": "ip.to.hue.bridge",
+  "huekey": "bridge_key",
+  "huegroup": "hue_group_id"
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=PyHook
+After=network.target
+
+[Service]
+User=[USER]
+Restart=always
+RestartSec=5
+Type=simple
+ExecStart=[path to python] [path to/pyhook.py]
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target
