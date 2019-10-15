@@ -15,14 +15,14 @@ install requirements
 ### How to use:
 
 ```
-bridgeip```: - The internal IP to talk to the bridge.
+bridgeip: - The internal IP to talk to the bridge.
 Use https://account.meethue.com/bridge to get the internal IP of the bridge, or go to https://discovery.meethue.com/, or find the internal IP of the bridge from your router.```
 
 From a computer on the same network as your bridge go to: https://<bridge.ip.address>/debug/clip.html
 
 We will use the API Debugger to get the variables.
 
-```huekey```: - This is the API key that we need to talk to the bridge. "pyhook#plex" can be called whatever you want.
+```huekey: - This is the API key that we need to talk to the bridge. "pyhook#plex" can be called whatever you want.
 
     URL: /api
     Body: {"devicetype":"pyhook#plex"}
@@ -47,7 +47,7 @@ Group ID ----> "1": {
 		                 "1"
 	              ],
 
-```clientid```: - the UUID of the plex client that you want to look for.
+```clientid: - the UUID of the plex client that you want to look for.
     Run the web server by running `python pyhook.py` then tail the log and play something on plex using the client you want to look for.
     You will see something like this:
     ```
