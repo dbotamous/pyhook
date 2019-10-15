@@ -43,31 +43,39 @@ def dewstuff():
 
 
 def light_control(event):
-    # TODO get light group settings first, then return lights to how they were once the media is stopped.
     # build PUT url to hue bridge
     puturl = 'http://' + bridgeip + '/api/' + huekey + '/groups/' + huegroup + '/action'
     # build GET url to hue bridge
     geturl = 'http://' + bridgeip + '/api/' + huekey + '/groups/' + huegroup
 
     # check for client
-    # TODO check hue response for errors.
     if event['Player']['uuid'] == clientid:
+        logging.info("Client detected")
+
+        # TODO get light group settings first, then return lights to how they were once the media is stopped.
+        # get current light group settings
+        lights_info = requests.get(geturl)
+        lights_dict = json.loads(lights_info.text)
+        lights_status = lights_dict['state']
+        logging.debug(lights_status)
+
         # turn off lights if media starts playing
+        # TODO check hue response for errors.
         if event['event'] == 'media.play' or event['event'] == 'media.resume':
-            logging.info("Turning lights off")
+            logging.info("Media playing, turning lights off")
             r = requests.put(puturl, data="{\"on\":false}")
+
         # dim lights if media is paused
         if event['event'] == 'media.pause':
-            logging.info("Dimming lights")
+            logging.info("Media paused, dimming lights")
             r = requests.put(puturl, data="{\"on\": true,\"bri\": 120,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
+
         # lights on if media is stopped
         if event['event'] == 'media.stop':
-            logging.info("Turning lights on")
+            logging.info("Media stopped, turning lights on")
             time.sleep(.5)
             r = requests.put(puturl, data="{\"on\": true,\"bri\": 200,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
-    light_status = requests.get(geturl)
-    print(light_status.content)
-    print(r)
+    print(r.status_code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='9090')
