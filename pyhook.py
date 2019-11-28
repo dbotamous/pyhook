@@ -25,8 +25,8 @@ clientid = config['clientid']
 bridgeip = config['bridgeip']
 huekey = config['huekey']
 huegroup = config['huegroup']
-citylon = config['city.lon']
-citylat = config['city.lat']
+# citylon = config['city.lon']
+# citylat = config['city.lat']
 
 app = Flask(__name__)
 pp = pprint.PrettyPrinter(indent=2)
