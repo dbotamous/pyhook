@@ -7,6 +7,7 @@ import requests
 import os.path
 import time
 import logging
+import ephem
 
 # Create a place for logs to go. Will need to make sure that the user running this has access to the logfile.
 logging.basicConfig(filename='/var/log/pyhook.log',
@@ -24,6 +25,8 @@ clientid = config['clientid']
 bridgeip = config['bridgeip']
 huekey = config['huekey']
 huegroup = config['huegroup']
+citylon = config['city.lon']
+citylat = config['city.lat']
 
 app = Flask(__name__)
 pp = pprint.PrettyPrinter(indent=2)
@@ -59,23 +62,30 @@ def light_control(event):
         lights_status = lights_dict['state']
         logging.debug(lights_status)
 
-        # turn off lights if media starts playing
-        # TODO check hue response for errors.
-        if event['event'] == 'media.play' or event['event'] == 'media.resume':
-            logging.info("Media playing, turning lights off")
-            r = requests.put(puturl, data="{\"on\":false}")
+        # check if dark outside
+        sun = ephem.Sun()
+        city = ephem.Observer()
+        sun.compute(city)
+        night = -12 * ephem.degree
+        if sun.alt < night:
+            # turn off lights if media starts playing
+            # TODO check hue response for errors.
+            if event['event'] == 'media.play' or event['event'] == 'media.resume':
+                logging.info("Media playing, turning lights off")
+                r = requests.put(puturl, data="{\"on\":false}")
 
-        # dim lights if media is paused
-        if event['event'] == 'media.pause':
-            logging.info("Media paused, dimming lights")
-            r = requests.put(puturl, data="{\"on\": true,\"bri\": 120,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
+            # dim lights if media is paused
+            if event['event'] == 'media.pause':
+                logging.info("Media paused, dimming lights")
+                r = requests.put(puturl, data="{\"on\": true,\"bri\": 120,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
 
-        # lights on if media is stopped
-        if event['event'] == 'media.stop':
-            logging.info("Media stopped, turning lights on")
-            time.sleep(.5)
-            r = requests.put(puturl, data="{\"on\": true,\"bri\": 200,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
-    print(r.status_code)
+            # lights on if media is stopped
+            if event['event'] == 'media.stop':
+                logging.info("Media stopped, turning lights on")
+                time.sleep(.5)
+                r = requests.put(puturl, data="{\"on\": true,\"bri\": 200,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
+    logging.info("Wrong player detected")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='9090')
