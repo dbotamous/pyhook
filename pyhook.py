@@ -16,7 +16,7 @@ logging.basicConfig(filename='/var/log/pyhook.log',
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
 # set the path to config file
-config_file = '.pyhook_config.json'
+config_file = '/path/to/config/.pyhook_config.json'
 if not os.path.isfile(config_file):
     raise Exception(
         "No config file found in Environment Variables or at {}".format(config_file))
