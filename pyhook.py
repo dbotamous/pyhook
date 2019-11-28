@@ -7,7 +7,7 @@ import requests
 import os.path
 import time
 import logging
-# import ephem
+import ephem
 
 # Create a place for logs to go. Will need to make sure that the user running this has access to the logfile.
 logging.basicConfig(filename='/var/log/pyhook.log',
@@ -25,13 +25,11 @@ clientid = config['clientid']
 bridgeip = config['bridgeip']
 huekey = config['huekey']
 huegroup = config['huegroup']
-# citylon = config['city.lon']
-# citylat = config['city.lat']
+citylon = config['city.lon']
+citylat = config['city.lat']
 
 app = Flask(__name__)
 pp = pprint.PrettyPrinter(indent=2)
-
-
 
 # create for route for POST requests.
 @app.route('/', methods=['POST'])
@@ -41,6 +39,7 @@ def dewstuff():
     # send to hue for light control
     light_control(data)
     # add future stuff below
+    # logging.info(data)
 
     return "OK"
 
