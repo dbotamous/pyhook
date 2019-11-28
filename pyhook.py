@@ -7,7 +7,7 @@ import requests
 import os.path
 import time
 import logging
-import ephem
+# import ephem
 
 # Create a place for logs to go. Will need to make sure that the user running this has access to the logfile.
 logging.basicConfig(filename='/var/log/pyhook.log',
