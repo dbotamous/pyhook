@@ -1,0 +1,5 @@
+.gitignore
+.pyhook_config.json
+.git
+.idea
+

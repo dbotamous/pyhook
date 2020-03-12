@@ -16,17 +16,13 @@ logging.basicConfig(filename='/var/log/pyhook.log',
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
 # set the path to config file
-config_file = '/path/to/config/.pyhook_config.json'
+config_file = '.pyhook_config.json'
 if not os.path.isfile(config_file):
     raise Exception(
         "No config file found in Environment Variables or at {}".format(config_file))
 config = json.load(open(config_file))
 clientid = config['clientid']
-bridgeip = config['bridgeip']
-huekey = config['huekey']
-huegroup = config['huegroup']
-# citylon = config['city.lon']
-# citylat = config['city.lat']
+iftttkey = config['iftttkey']
 
 app = Flask(__name__)
 pp = pprint.PrettyPrinter(indent=2)
@@ -45,45 +41,33 @@ def dewstuff():
 
 
 def light_control(event):
-    # build PUT url to hue bridge
-    puturl = 'http://' + bridgeip + '/api/' + huekey + '/groups/' + huegroup + '/action'
-    # build GET url to hue bridge
-    geturl = 'http://' + bridgeip + '/api/' + huekey + '/groups/' + huegroup
+    playurl = 'https://maker.ifttt.com/trigger/play/with/key/' + iftttkey
+    pauseurl = 'https://maker.ifttt.com/trigger/pause/with/key/' + iftttkey
+    stopurl = 'https://maker.ifttt.com/trigger/stop/with/key/' + iftttkey
+
+    testurl = 'https://maker.ifttt.com/trigger/stop/with/key/' + iftttkey
+    print(testurl)
 
     # check for client
     if event['Player']['uuid'] == clientid:
-        logging.info("Client detected")
+        logging.info("Correct client detected, dewing stuff.")
 
-        # TODO get light group settings first, then return lights to how they were once the media is stopped.
-        # get current light group settings
-        lights_info = requests.get(geturl)
-        lights_dict = json.loads(lights_info.text)
-        lights_status = lights_dict['state']
-        logging.debug(lights_status)
-
-        # check if dark outside
-        # sun = ephem.Sun()
-        # city = ephem.Observer()
-        # sun.compute(city)
-        # night = -12 * ephem.degree
-        # if sun.alt < night:
-        # turn off lights if media starts playing
-        # TODO check hue response for errors.
+        # lights off if media is playing
         if event['event'] == 'media.play' or event['event'] == 'media.resume':
             logging.info("Media playing, turning lights off")
-            r = requests.put(puturl, data="{\"on\":false}")
+            r = requests.put(playurl)
 
         # dim lights if media is paused
         if event['event'] == 'media.pause':
             logging.info("Media paused, dimming lights")
-            r = requests.put(puturl, data="{\"on\": true,\"bri\": 120,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
+            r = requests.put(pauseurl)
 
         # lights on if media is stopped
         if event['event'] == 'media.stop':
             logging.info("Media stopped, turning lights on")
-            time.sleep(.5)
-            r = requests.put(puturl, data="{\"on\": true,\"bri\": 200,\"hue\": 8402,\"sat\": 140,\"effect\": \"none\",\"xy\": [0.4575,0.4099]}")
-    logging.info("Wrong player detected")
+            r = requests.put(stopurl)
+
+    logging.info("Wrong player detected, dewing nothing.")
 
 
 if __name__ == '__main__':

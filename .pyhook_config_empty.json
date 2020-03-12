@@ -1,8 +1,4 @@
 {
   "clientid": "plex-client-id",
-  "bridgeip": "ip.to.hue.bridge",
-  "huekey": "bridge_key",
-  "huegroup": "hue_group_id",
-  "city.lon": "0.0",
-  "city.lat": "0.0"
+  "iftttkey": "putyourkeyhere"
 }

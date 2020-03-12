@@ -2,7 +2,7 @@
 
 I'm bad at READMEs more readme coming.....
 
-This will run a web server for plex webhooks, and currently control hue lights when media from a certain client is played/paused/stopped.
+This will run a web server for plex webhooks. It will look for media.play, media.resume, media.pause, and media.stop events. It will then send that to IFTTT, and you can tie it into whatever home automation you chose. I use this with Abode to control my theater lighting, works great. 
 
 ### Prerequisites:
 
@@ -14,56 +14,32 @@ install requirements
 
 ### How to use:
 
-```
-bridgeip: - The internal IP to talk to the bridge
-```
-Use https://account.meethue.com/bridge to get the internal IP of the bridge, or go to https://discovery.meethue.com/, or find the internal IP of the bridge from your router.
+I'll add to this later.
 
-From a computer on the same network as your bridge go to: https://<bridge.ip.address>/debug/clip.html
+You need to have an IFTTT account, and create and a webhook service. Once that is created, you can go to the webhook service and click on documentation, that will give you a url like this:
+"https://maker.ifttt.com/trigger/{event}/with/key/supersecretkey"
 
-We will use the API Debugger to get the variables.
+You will add the "supersecretkey" to the .pyhook_config.json file
 
-```
-huekey: - This is the API key that we need to talk to the bridge. "pyhook#plex" can be called whatever you want.
-    URL: /api
-    Body: {"devicetype":"pyhook#plex"}
-    POST
-```
-The response description will say "Link button not pressed". Press the button on your bridge,
-and click the POST button again. The new response will say username: <token>. This is the
-value you want to use as the HUE_TOKEN. We will also use this value to get the next few
-variables.
+You then create three Applets, 
+If Webhook play, then automation of your choosing. 
 
+For me using Abode, I have webhooks, and Abode as services, so mine look like this:
+If Webhook play, then Abode dim the theater lights to 0
+If Webhook pause, then Abode dim the theater lights to 20
+If Webhook stop, then Abode dim the theater lights to 50
 
+Once those are created, you can start the service (python pyhook.py) and tail the log file (/var/log/pyhook.log).
+Play something on the plex client that you want to use, you will see something like this
 
 ```
-huegroup: - This is the group ID of the lights you want to interact with.
-    URL: /api/<token>/groups
-    BODY:
-    GET
-```
-In the list of groups, find the name of the group you want to use, right above that is the
-group ID.
-```
-Group ID ----> "1": {
-	              "name": "Theater", <-----Group Name
-	              "lights": [
-		                 "1"
-	              ],
-```
+'Player': { 'local': True,
+          'publicAddress': '1.2.3.4',
+          'title': 'Name of client',
+          'uuid': '123abcd4567-com-plexapp'}, <---- this the ID to use.
 
 ```
-clientid: - the UUID of the plex client that you want to look for
-```
-Run the web server by running `python pyhook.py` then tail the log and play something on plex using the client you want to look for.
-    You will see something like this:
 
+Put that plex client ID in the .pyhook_config.json file, and restart the service. 
 
-    'Player': { 'local': True,
-              'publicAddress': '1.2.3.4',
-              'title': 'Name of client',
-              'uuid': '123abcd4567-com-plexapp'}, <---- this the ID to use.
-
-
-Rename .pyhook_config_empty.json to .pyhook_config.json
-Put in the values n stuff.
+That should be it. 
