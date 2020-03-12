@@ -5,9 +5,7 @@ import json
 import pprint
 import requests
 import os.path
-import time
 import logging
-# import ephem
 
 # Create a place for logs to go. Will need to make sure that the user running this has access to the logfile.
 logging.basicConfig(filename='/var/log/pyhook.log',
@@ -27,12 +25,12 @@ iftttkey = config['iftttkey']
 app = Flask(__name__)
 pp = pprint.PrettyPrinter(indent=2)
 
-# create for route for POST requests.
+# create route for POST requests.
 @app.route('/', methods=['POST'])
 def dewstuff():
     data = json.loads(request.form['payload'])
     pp.pprint(data)
-    # send to hue for light control
+    # send to IFTTT light control
     light_control(data)
     # add future stuff below
     # logging.info(data)
