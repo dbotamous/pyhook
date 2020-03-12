@@ -45,9 +45,6 @@ def light_control(event):
     pauseurl = 'https://maker.ifttt.com/trigger/pause/with/key/' + iftttkey
     stopurl = 'https://maker.ifttt.com/trigger/stop/with/key/' + iftttkey
 
-    testurl = 'https://maker.ifttt.com/trigger/stop/with/key/' + iftttkey
-    print(testurl)
-
     # check for client
     if event['Player']['uuid'] == clientid:
         logging.info("Correct client detected, dewing stuff.")
