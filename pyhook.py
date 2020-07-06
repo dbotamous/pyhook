@@ -9,12 +9,12 @@ import logging
 
 # Create a place for logs to go. Will need to make sure that the user running this has access to the logfile.
 logging.basicConfig(filename='/var/log/pyhook.log',
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S')
 
 # set the path to config file
-config_file = '.pyhook_config.json'
+config_file = '/home/dbot/tools/pyhook/.pyhook_config.json'
 if not os.path.isfile(config_file):
     raise Exception(
         "No config file found in Environment Variables or at {}".format(config_file))
@@ -42,9 +42,10 @@ def light_control(event):
     playurl = 'https://maker.ifttt.com/trigger/play/with/key/' + iftttkey
     pauseurl = 'https://maker.ifttt.com/trigger/pause/with/key/' + iftttkey
     stopurl = 'https://maker.ifttt.com/trigger/stop/with/key/' + iftttkey
+    playerid = event['Player']['uuid']
 
     # check for client
-    if event['Player']['uuid'] == clientid:
+    if playerid == clientid:
         logging.info("Correct client detected, dewing stuff.")
 
         # lights off if media is playing
@@ -62,6 +63,7 @@ def light_control(event):
             logging.info("Media stopped, turning lights on")
             r = requests.put(stopurl)
 
+    logging.info("Detected player: " + playerid)
     logging.info("Wrong player detected, dewing nothing.")
 
 
