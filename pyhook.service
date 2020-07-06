@@ -3,11 +3,11 @@ Description=PyHook
 After=network.target
 
 [Service]
-User=[USER]
+User=dbot
 Restart=always
 RestartSec=5
 Type=simple
-ExecStart=[path to python] [path to/pyhook.py]
+ExecStart=/usr/bin/python3 /home/dbot/tools/pyhook/pyhook.py
 TimeoutStopSec=20
 
 [Install]
