@@ -51,4 +51,4 @@ Play something on the plex client that you want to use, you will see something l
 
 Put that plex client ID in the .pyhook_config.json file, and restart the service. 
 
-That should be it. 
+That should be it..
